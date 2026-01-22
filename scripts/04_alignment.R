@@ -15,39 +15,32 @@
 # Load libraries
 library(msa)
 library(Biostrings)
+#########################################
 
-cat("Reading combined FASTA file...\n")
+#install.packages("bio3d")
+library(bio3d)
 
-seqs <- readAAStringSet("data/raw/sis1_orthologs.fasta")
-print(seqs)
-
-cat("Running multiple sequence alignment using ClustalOmega...\n")
-
-alignment <- msa(seqs, method = "ClustalOmega")
-
-cat("Alignment completed.\n")
-
-# Convert alignment (optional but good practice)
-aln <- msaConvert(alignment, type = "seqinr::alignment")
-
+# Create output directory if needed
 if (!dir.exists("results/alignment")) {
   dir.create("results/alignment", recursive = TRUE)
 }
 
-cat("Saving pretty alignment to FASTA text...\n")
+# Convert aligned matrix to FASTA lines
+fasta_lines <- c()
 
-# Save alignment as FASTA
-writeXStringSet(
-  msaConvert(alignment, type = "Biostrings::AAStringSet"),
-  file = "results/alignment/Sis1_alignment.fasta"
-)
+for (i in seq_len(nrow(aln_fasta$ali))) {
+  header <- paste0(">", aln_fasta$id[i])
+  seq <- paste(aln_fasta$ali[i, ], collapse = "")
+  fasta_lines <- c(fasta_lines, header, seq)
+}
 
-# Save alignment as plain text
+# Write aligned FASTA file
+writeLines(fasta_lines, "results/alignment/Sis1_alignment.fasta")
+
+# Save readable alignment
 capture.output(
   print(alignment, show = "complete"),
   file = "results/alignment/Sis1_alignment.txt"
 )
 
-cat("Alignment saved as FASTA and TXT.\n")
-
-
+cat("✔ Alignment saved successfully\n")

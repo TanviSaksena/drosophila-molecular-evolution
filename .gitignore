@@ -1,4 +1,13 @@
+# LaTeX / alignment junk
+*.aux
+*.log
+*.tex
+
+# RStudio
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
+# OS
+.DS_Store
+Thumbs.db
